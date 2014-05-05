@@ -2,8 +2,6 @@ package org.rzymek.hello;
 
 import java.util.Date;
 
-import com.android.debug.hv.ViewServer;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +10,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.LinearLayout;
+
+import com.android.debug.hv.ViewServer;
 
 public class RzymekActivity extends Activity {
 
@@ -22,15 +21,17 @@ public class RzymekActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_rzymek);
+		Button button = (Button) findViewById(R.id.button1);
+		
 //		Button button = new Button(this);
 //		button.setText("OK...");
-//		button.setOnClickListener(new OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View arg0) {
-//				startActivity(new Intent(RzymekActivity.this, SecondActivity.class));
-//			}
-//		});
+		button.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				startActivity(new Intent(RzymekActivity.this, SecondActivity.class));
+			}
+		});
 //		LinearLayout linearLayout = new LinearLayout(this);
 //		Button b2 = new Button(this);
 //		b2.setText("b22");
