@@ -2,6 +2,8 @@ package org.rzymek.hello;
 
 import java.util.Date;
 
+import com.android.debug.hv.ViewServer;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 public class RzymekActivity extends Activity {
 
@@ -28,7 +31,14 @@ public class RzymekActivity extends Activity {
 				startActivity(new Intent(RzymekActivity.this, SecondActivity.class));
 			}
 		});
-		setContentView(button);
+		LinearLayout linearLayout = new LinearLayout(this);
+		Button b2 = new Button(this);
+		b2.setText("b22");
+		linearLayout.addView(button);
+		linearLayout.addView(b2);
+		setContentView(linearLayout);
+		
+		ViewServer.get(this).addWindow(this);
 	}
 
 	public void rzClick(View view) {
