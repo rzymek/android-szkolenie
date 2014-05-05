@@ -16,29 +16,31 @@ import com.android.debug.hv.ViewServer;
 public class RzymekActivity extends Activity {
 
 	private static final String TAG = RzymekActivity.class.getSimpleName();
+	protected int counter=1;
 
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt("counter", counter);
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_rzymek);
-		Button button = (Button) findViewById(R.id.button1);
+		final Button button = (Button) findViewById(R.id.button1);
+
+		if(savedInstanceState != null) {
+			counter = savedInstanceState.getInt("counter");
+		}
+		button.setText(""+counter);
 		
-//		Button button = new Button(this);
-//		button.setText("OK...");
-		button.setOnClickListener(new OnClickListener() {
-			
+		button.setOnClickListener(new OnClickListener() {		
 			@Override
 			public void onClick(View arg0) {
-				startActivity(new Intent(RzymekActivity.this, SecondActivity.class));
+//				startActivity(new Intent(RzymekActivity.this, SecondActivity.class));
+				button.setText(""+(counter++));
 			}
 		});
-//		LinearLayout linearLayout = new LinearLayout(this);
-//		Button b2 = new Button(this);
-//		b2.setText("b22");
-//		linearLayout.addView(button);
-//		linearLayout.addView(b2);
-//		setContentView(linearLayout);
-//		
 		ViewServer.get(this).addWindow(this);
 		Log.d(TAG,"onCreate");
 	}
