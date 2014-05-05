@@ -21,23 +21,23 @@ public class RzymekActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		setContentView(R.layout.activity_rzymek);
-		Button button = new Button(this);
-		button.setText("OK...");
-		button.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View arg0) {
-				startActivity(new Intent(RzymekActivity.this, SecondActivity.class));
-			}
-		});
-		LinearLayout linearLayout = new LinearLayout(this);
-		Button b2 = new Button(this);
-		b2.setText("b22");
-		linearLayout.addView(button);
-		linearLayout.addView(b2);
-		setContentView(linearLayout);
-		
+		setContentView(R.layout.activity_rzymek);
+//		Button button = new Button(this);
+//		button.setText("OK...");
+//		button.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View arg0) {
+//				startActivity(new Intent(RzymekActivity.this, SecondActivity.class));
+//			}
+//		});
+//		LinearLayout linearLayout = new LinearLayout(this);
+//		Button b2 = new Button(this);
+//		b2.setText("b22");
+//		linearLayout.addView(button);
+//		linearLayout.addView(b2);
+//		setContentView(linearLayout);
+//		
 		ViewServer.get(this).addWindow(this);
 		Log.d(TAG,"onCreate");
 	}
