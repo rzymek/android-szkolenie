@@ -25,7 +25,7 @@
         android:inputType="textPassword" />
 
     <Button
-        android:background="#ff8080"
+        android:background="@drawable/todo_button_selector"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/login" />
