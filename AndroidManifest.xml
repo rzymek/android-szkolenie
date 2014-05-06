@@ -16,14 +16,16 @@
         <activity
             android:name="org.rzymek.todoexpert.LoginActivity"
             android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="org.rzymek.todoexpert.TodoListActivity"
+            android:label="@string/todo_list" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="org.rzymek.todoexpert.TodoListActivity"
-            android:label="@string/todo_list"/>
     </application>
 
 </manifest>
