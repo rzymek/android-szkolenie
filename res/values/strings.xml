@@ -7,6 +7,7 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
+    <string name="logout">Logout</string>
     <string name="empty_value">Can\'t be empty</string>
     <string name="todo_list">TODOs</string>
 
