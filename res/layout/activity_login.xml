@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
@@ -10,24 +10,27 @@
     tools:ignore="MergeRootFrame" >
 
     <EditText
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="20dp"
+        android:id="@+id/user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="50dp"
         android:hint="@string/username"
         android:inputType="text" />
-		
+
     <EditText
-        android:layout_marginBottom="50dp"
+        android:id="@+id/pass"
+        android:layout_below="@id/user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
         android:hint="@string/password"
         android:inputType="textPassword" />
 
     <Button
-        android:background="@drawable/todo_button_selector"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/todo_button_selector"
         android:text="@string/login" />
 
-</LinearLayout>
+</RelativeLayout>
