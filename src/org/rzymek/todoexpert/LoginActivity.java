@@ -1,6 +1,7 @@
 package org.rzymek.todoexpert;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -48,10 +49,37 @@ public class LoginActivity extends Activity {
 		}
 		if (failed)
 			return;
-		login(user,pass);
+		login(user, pass);
 	}
 
 	private void login(String user, String pass) {
+		AsyncTask<String, Integer, Boolean> task = new AsyncTask<String, Integer, Boolean>() {
+			@Override
+			protected Boolean doInBackground(String... params) {
+				sleep(5);
+				String user = params[0];
+				String pass = params[1];
+				return ("test".equals(user) && "test".equals(pass));
+			}
+			@Override
+			protected void onPostExecute(Boolean result) {
+				toast("Login " +(result?"OK":"FAILED"));
+			}
+		};
+		
+		task.execute(user,pass);
+	}
+
+	protected void toast(String string) {
+		Toast.makeText(this, string, Toast.LENGTH_LONG).show();
+	}
+
+	protected static void sleep(int sec) {
+		try {
+			Thread.sleep(sec*1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
