@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
+    android:padding="10dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="org.rzymek.todoexpert.AddActivity"
@@ -13,26 +14,22 @@
         android:layout_alignParentTop="true"
         android:text="@string/completed" />
 
+    <EditText
+        android:id="@+id/itemText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/completedBox"
+        android:gravity="top"
+        android:hint="@string/describe"
+        android:inputType="textMultiLine" >
+    </EditText>
+
     <Button
         android:id="@+id/add_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
+        android:layout_below="@id/itemText"
         android:layout_marginBottom="5dp"
         android:text="@android:string/ok" />
-
-    <EditText
-        android:id="@+id/editText1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/add_button"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/completedBox"
-        android:gravity="top"
-        android:inputType="textMultiLine"
-        android:hint="@string/describe"
-         >
-    </EditText>
 
 </RelativeLayout>
