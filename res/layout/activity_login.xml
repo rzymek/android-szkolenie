@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
@@ -20,7 +20,6 @@
 
     <EditText
         android:id="@+id/pass"
-        android:layout_below="@id/user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="50dp"
@@ -33,4 +32,4 @@
         android:background="@drawable/todo_button_selector"
         android:text="@string/login" />
 
-</RelativeLayout>
+</LinearLayout>
