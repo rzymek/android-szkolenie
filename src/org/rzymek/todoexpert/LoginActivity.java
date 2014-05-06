@@ -14,10 +14,10 @@ import android.widget.ProgressBar;
 
 public class LoginActivity extends Activity {
 
-	private EditText userEdit;
-	private EditText passEdit;
-	private Button doLogin;
-	private ProgressBar progress;
+	protected EditText userEdit;
+	protected EditText passEdit;
+	protected Button doLogin;
+	protected ProgressBar progress;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,38 +49,14 @@ public class LoginActivity extends Activity {
 			passEdit.setError(getString(R.string.empty_value));
 			failed = true;
 		}
-//		if (failed)
-//			return;
+		
+		// if (failed)
+		// return;
 		login(user, pass);
 	}
 
 	private void login(String user, String pass) {
-		AsyncTask<String, Integer, Boolean> task = new AsyncTask<String, Integer, Boolean>() {
-			@Override
-			protected void onPreExecute() {
-				doLogin.setEnabled(false);
-			}
-
-			@Override
-			protected Boolean doInBackground(String... params) {
-				for(int i=0;i<5;i++) {
-					publishProgress(i);
-					sleep(1);
-				}
-				String user = params[0];
-				String pass = params[1];
-				return ("test".equals(user) && "test".equals(pass));
-			}
-			@Override
-			protected void onProgressUpdate(Integer... values) {
-				progress.setProgress(values[0]);
-			}
-			@Override
-			protected void onPostExecute(Boolean result) {
-				toast("Login " + (result ? "OK" : "FAILED"));
-				doLogin.setEnabled(true);
-			}
-		};
+		AsyncTask<String, Integer, Boolean> task = new LoginTask(this);
 		task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, user, pass);
 	}
 
