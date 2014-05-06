@@ -38,6 +38,7 @@ public class TodoListActivity extends Activity {
 				return true;
 			}
 			case R.id.action_add: {
+				startActivity(new Intent(TodoListActivity.this, AddActivity.class));
 				return true;
 			}
 			default:

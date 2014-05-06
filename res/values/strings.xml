@@ -10,6 +10,10 @@
     <string name="logout">Logout</string>
     <string name="empty_value">Can\'t be empty</string>
     <string name="todo_list">TODOs</string>
-	<string name="add_todo">Add</string>
-	<string name="confirm">Are you sure?</string>
+    <string name="add_todo">Add</string>
+    <string name="confirm">Are you sure?</string>
+    <string name="title_activity_add">AddActivity</string>
+    <string name="completed">Completed</string>
+    <string name="describe">Enter description</string>
+
 </resources>
