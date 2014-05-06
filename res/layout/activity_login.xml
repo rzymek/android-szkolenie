@@ -27,6 +27,7 @@
         android:inputType="textPassword" />
 
     <Button
+        android:id="@+id/doLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/todo_button_selector"
