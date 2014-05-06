@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:paddingLeft="20dp"
     android:paddingRight="20dp"
-    tools:context="org.rzymek.todoexpert.TodoListActivity"
+    tools:context="org.rzymek.todoexpert.LoginActivity"
     tools:ignore="MergeRootFrame" >
 
     <EditText
@@ -39,6 +39,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        />
+        android:max="5" />
 
 </LinearLayout>
