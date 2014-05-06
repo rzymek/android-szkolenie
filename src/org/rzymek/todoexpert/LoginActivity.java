@@ -1,9 +1,16 @@
 package org.rzymek.todoexpert;
 
+import java.io.IOException;
+
+import org.json.JSONObject;
+
+import pl.allegro.todo.utils.HttpUtils;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,7 +63,42 @@ public class LoginActivity extends Activity {
 	}
 
 	private void login(String user, String pass) {
-		LoginTask task = new LoginTask(this);
+		AsyncTask<String, Integer, JSONObject> task = new AsyncTask<String, Integer, JSONObject>() {
+			protected void onPreExecute() {
+				doLogin.setEnabled(false);
+			}
+
+			protected JSONObject doInBackground(String... params) {
+				String user = params[0];
+				String pass = params[1];
+				try {
+					String result = HttpUtils.postLogin(user, pass);
+					return new JSONObject(result);
+				} catch (Exception e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+
+			protected void onProgressUpdate(Integer... values) {
+				progress.setProgress(values[0]);
+			}
+
+			protected void onPostExecute(JSONObject result) {
+				doLogin.setEnabled(true);
+				if(result == null) {
+					Utils.toast(LoginActivity.this, "Login ERROR");
+					return;
+				}				
+				if (result.has("error")) {
+					Utils.toast(LoginActivity.this, "Login failed: "+result.optString("error"));
+					return;
+				}
+				Intent intent = new Intent(LoginActivity.this, TodoListActivity.class);
+				startActivity(intent);
+				finish();
+			}
+		};
 		task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, user, pass);
 	}
 
