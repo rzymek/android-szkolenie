@@ -22,9 +22,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/password"
-        android:inputType="textVisiblePassword" />
+        android:inputType="textPassword" />
 
     <Button
+        android:background="#ff8080"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/login" />
