@@ -10,13 +10,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.ProgressBar;
 
 public class LoginActivity extends Activity {
 
 	private EditText userEdit;
 	private EditText passEdit;
 	private Button doLogin;
+	private ProgressBar progress;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,7 @@ public class LoginActivity extends Activity {
 		userEdit = (EditText) findViewById(R.id.user);
 		passEdit = (EditText) findViewById(R.id.pass);
 		doLogin = (Button) findViewById(R.id.doLogin);
+		progress = (ProgressBar) findViewById(R.id.progress);
 
 		doLogin.setOnClickListener(new OnClickListener() {
 			@Override
@@ -47,36 +49,48 @@ public class LoginActivity extends Activity {
 			passEdit.setError(getString(R.string.empty_value));
 			failed = true;
 		}
-		if (failed)
-			return;
+//		if (failed)
+//			return;
 		login(user, pass);
 	}
 
 	private void login(String user, String pass) {
 		AsyncTask<String, Integer, Boolean> task = new AsyncTask<String, Integer, Boolean>() {
 			@Override
+			protected void onPreExecute() {
+				doLogin.setEnabled(false);
+			}
+
+			@Override
 			protected Boolean doInBackground(String... params) {
-				sleep(5);
+				for(int i=0;i<5;i++) {
+					publishProgress(i);
+					sleep(1);
+				}
 				String user = params[0];
 				String pass = params[1];
 				return ("test".equals(user) && "test".equals(pass));
 			}
 			@Override
+			protected void onProgressUpdate(Integer... values) {
+				progress.setProgress(values[0]);
+			}
+			@Override
 			protected void onPostExecute(Boolean result) {
-				toast("Login " +(result?"OK":"FAILED"));
+				toast("Login " + (result ? "OK" : "FAILED"));
+				doLogin.setEnabled(true);
 			}
 		};
-		
-		task.execute(user,pass);
+		task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, user, pass);
 	}
 
 	protected void toast(String string) {
-		Toast.makeText(this, string, Toast.LENGTH_LONG).show();
+		Utils.toast(this, string);
 	}
 
 	protected static void sleep(int sec) {
 		try {
-			Thread.sleep(sec*1000);
+			Thread.sleep(sec * 1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
