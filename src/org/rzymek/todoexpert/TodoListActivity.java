@@ -57,9 +57,9 @@ public class TodoListActivity extends ListActivity {
 
 		dao = new TodoDao(this);
 		Cursor query = fetch();
-		String[] from = { TodoDao.C_CONTENT};
-		int[] to = { R.id.todoCheckbox};
-		listAdapter = new SimpleCursorAdapter(this, R.layout.todo_item, query, from, to, 0){
+		String[] from = { TodoDao.C_CONTENT };
+		int[] to = { R.id.todoCheckbox };
+		listAdapter = new SimpleCursorAdapter(this, R.layout.todo_item, query, from, to, 0) {
 			@Override
 			public View getView(int idx, View convertView, ViewGroup parent) {
 				View view = super.getView(idx, convertView, parent);
@@ -80,7 +80,7 @@ public class TodoListActivity extends ListActivity {
 					});
 					box.setChecked(!(cursor.getShort(cursor.getColumnIndex(TodoDao.C_DONE)) == 0));
 					updateStrike(box);
-					//return false -> niech binder wywo³a jeszcze setText
+					// return false -> niech binder wywo³a jeszcze setText
 				}
 				return false;
 			}
@@ -90,7 +90,7 @@ public class TodoListActivity extends ListActivity {
 	}
 
 	private Cursor fetch() {
-		return dao.query(loginManager.userId, true);
+		return dao.query(loginManager.userId, false);
 	}
 
 	private void updateStrike(CheckBox box) {
@@ -183,6 +183,10 @@ public class TodoListActivity extends ListActivity {
 			}
 
 			protected void onPostExecute(java.util.List<Todo> result) {
+				if (lastError != null) {
+					Utils.toast(TodoListActivity.this, "" + lastError);
+					return;
+				}
 				listAdapter.swapCursor(fetch());
 			};
 		}.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, token);

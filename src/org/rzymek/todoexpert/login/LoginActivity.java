@@ -42,8 +42,8 @@ public class LoginActivity extends Activity {
 		});
 
 		if (BuildConfig.DEBUG) {
-			userEdit.setText("test");
-			passEdit.setText("test");
+			userEdit.setText("q");
+			passEdit.setText("q");
 		}
 	}
 
