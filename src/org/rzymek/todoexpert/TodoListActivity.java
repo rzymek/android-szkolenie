@@ -64,7 +64,14 @@ public class TodoListActivity extends ListActivity {
 		String[] from = { TodoDao.C_CONTENT};
 		int[] to = { R.id.todoCheckbox};
 		listAdapter = new SimpleCursorAdapter(this, R.layout.todo_item, query, from, to,
-				SimpleCursorAdapter.FLAG_AUTO_REQUERY);
+				SimpleCursorAdapter.FLAG_AUTO_REQUERY){
+			@Override
+			public View getView(int idx, View convertView, ViewGroup parent) {
+				View view = super.getView(idx, convertView, parent);
+				view.setBackgroundResource(idx % 2 == 0 ? android.R.color.darker_gray : android.R.color.white);
+				return view;
+			}
+		};
 		ViewBinder binder = new ViewBinder() {
 			@Override
 			public boolean setViewValue(View view, Cursor cursor, int colIdx) {
@@ -78,7 +85,7 @@ public class TodoListActivity extends ListActivity {
 					});
 					box.setChecked(!(cursor.getShort(cursor.getColumnIndex(TodoDao.C_DONE)) == 0));
 					updateStrike(box);
-					//return false -> niech binder wywo³a jest setText
+					//return false -> niech binder wywo³a jeszcze setText
 				}
 				return false;
 			}
