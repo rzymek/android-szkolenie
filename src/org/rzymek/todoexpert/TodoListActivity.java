@@ -1,12 +1,15 @@
 package org.rzymek.todoexpert;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.rzymek.todoexpert.login.LoginActivity;
 
 import pl.allegro.todo.utils.HttpUtils;
+import pl.allegro.todo.utils.Utils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -18,29 +21,34 @@ import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 public class TodoListActivity extends Activity {
 
 	public static final String TAG = "TAG";
 	private static final int REQUEST_CODE = 123;
-	private String token;
+	private ListView list;
+	private ArrayAdapter<Todo> listAdapter;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		SharedPreferences store = PreferenceManager.getDefaultSharedPreferences(this);
-		String token = store.getString("token",null);
-		if(token == null) {
+		if(!Utils.getLoginManager(this).isLoggedIn()) {
 			showLogin();
-			return;
+			return;			
 		}
 		setContentView(R.layout.activity_todo_list);
+		list = (ListView) findViewById(R.id.todoItems);
+		listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+		list.setAdapter(listAdapter);
+		refresh();
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.todo_list_menu, menu);
-		token = getIntent().getStringExtra("token");
 		return true;
 	}
 
@@ -60,6 +68,7 @@ public class TodoListActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_logout: {
+			
 			SharedPreferences store = PreferenceManager.getDefaultSharedPreferences(this);
 			Editor edit = store.edit();
 			edit.clear();
@@ -78,39 +87,7 @@ public class TodoListActivity extends Activity {
 			return true;
 		}
 		case R.id.action_refresh: {
-			new AsyncTask<Void, Void, List<Todo>>() {
-				private Exception lastError;
-
-				@Override
-				protected List<Todo> doInBackground(Void... params) {
-					lastError = null;
-					try {
-						String tasks = HttpUtils.getTasks(token);
-						JSONObject result = new JSONObject(tasks);
-						JSONArray results = result.getJSONArray("results");
-						List<Todo> ret = new ArrayList<>(results.length());
-						for (int i = 0; i < results.length(); i++) {
-							JSONObject object = (JSONObject) results.get(i);
-							Todo todo = new Todo(object.getString("content"), object.getBoolean("done"));
-							ret.add(todo);
-						}
-						return ret;
-					} catch (Exception e) {
-						e.printStackTrace();
-						lastError = e;
-						return null;
-					}
-				}
-
-				@Override
-				protected void onPostExecute(List<Todo> result) {
-					if (result != null) {
-						Utils.toast(TodoListActivity.this, "Received: " + result);
-					} else {
-						Utils.toast(TodoListActivity.this, "Error: " + lastError);
-					}
-				}
-			}.execute();
+			refresh();
 			return true;
 		}
 		case R.id.action_add: {
@@ -124,8 +101,56 @@ public class TodoListActivity extends Activity {
 		}
 	}
 
+	private void refresh() {
+		String token = Utils.getLoginManager(this).token;
+		new AsyncTask<String, Void, List<Todo>>() {
+			private Exception lastError;
+
+			protected void onPreExecute() {
+				lastError = null;
+			}
+			
+			@Override
+			protected List<Todo> doInBackground(String... params) {
+				try {
+					String tasks = HttpUtils.getTasks(params[0]);
+					JSONObject result = new JSONObject(tasks);
+					JSONArray results = result.getJSONArray("results");
+					List<Todo> ret = new ArrayList<>(results.length());
+					for (int i = 0; i < results.length(); i++) {
+						JSONObject object = (JSONObject) results.get(i);
+						Todo todo = new Todo(object.getString("content"), object.getBoolean("done"));
+						ret.add(todo);
+					}
+					return ret;
+				} catch (Exception e) {
+					e.printStackTrace();
+					lastError = e;
+					return null;
+				}
+			}
+
+			@Override
+			protected void onPostExecute(List<Todo> result) {
+				if (result == null) {
+					Utils.toast(TodoListActivity.this, "Error: " + lastError);
+					List<Todo> empty=Collections.emptyList();
+					setItems(empty);
+					return;
+				}
+				setItems(result);
+			}
+		}.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, token);
+	}
+
 	private void showLogin() {
 		startActivity(new Intent(this, LoginActivity.class));
 		finish();
+	}
+
+	private void setItems(List<Todo> result) {
+		Log.i("XXX", ""+result);
+		listAdapter.clear();
+		listAdapter.addAll(result);
 	}
 }

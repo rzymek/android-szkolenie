@@ -1,16 +1,17 @@
-package org.rzymek.todoexpert;
+package org.rzymek.todoexpert.login;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.rzymek.todoexpert.BuildConfig;
+import org.rzymek.todoexpert.R;
+import org.rzymek.todoexpert.TodoListActivity;
 
 import pl.allegro.todo.utils.HttpUtils;
+import pl.allegro.todo.utils.Utils;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -96,11 +97,9 @@ public class LoginActivity extends Activity {
 					return;
 				}
 				try {
-					SharedPreferences store = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
-					Editor edit = store.edit();
-					edit.putString("token", result.getString("sessionToken"));
-					edit.putString("userId", result.getString("objectId"));
-					edit.apply();
+					String token = result.getString("sessionToken");
+					String userId = result.getString("objectId");
+					Utils.getLoginManager(LoginActivity.this).login(token, userId);
 				} catch (JSONException e) {
 					Utils.toast(LoginActivity.this, "Failed to read sessionToken: " + e);
 					return;

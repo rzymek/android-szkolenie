@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:paddingLeft="20dp"
     android:paddingRight="20dp"
-    tools:context="org.rzymek.todoexpert.LoginActivity"
+    tools:context="org.rzymek.todoexpert.login.LoginActivity"
     tools:ignore="MergeRootFrame" >
 
     <ListView

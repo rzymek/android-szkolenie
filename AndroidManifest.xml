@@ -11,12 +11,13 @@
         android:targetSdkVersion="19" />
 
     <application
+        android:name=".TodoApp"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="org.rzymek.todoexpert.LoginActivity"
+            android:name="org.rzymek.todoexpert.login.LoginActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
