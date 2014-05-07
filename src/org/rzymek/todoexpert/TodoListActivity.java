@@ -10,9 +10,9 @@ import org.rzymek.todoexpert.login.LoginActivity;
 
 import pl.allegro.todo.utils.HttpUtils;
 import pl.allegro.todo.utils.Utils;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -30,7 +30,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 
-public class TodoListActivity extends Activity {
+public class TodoListActivity extends ListActivity {
 
 	public static final String TAG = "TAG";
 	private static final int REQUEST_CODE = 123;
@@ -44,7 +44,7 @@ public class TodoListActivity extends Activity {
 			return;
 		}
 		setContentView(R.layout.activity_todo_list);
-		list = (ListView) findViewById(R.id.todoItems);
+		list = this.getListView();
 		listAdapter = new ArrayAdapter<Todo>(this, R.layout.todo_item, R.id.todoText) {
 			@Override
 			public View getView(int idx, View convertView, ViewGroup parent) {

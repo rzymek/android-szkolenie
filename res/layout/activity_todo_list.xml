@@ -10,7 +10,7 @@
     tools:ignore="MergeRootFrame" >
 
     <ListView
-        android:id="@+id/todoItems"
+        android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
     </ListView>
