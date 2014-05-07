@@ -61,18 +61,25 @@ public class TodoListActivity extends ListActivity {
 
 		dao = new TodoDao(this);
 		Cursor query = dao.query(loginManager.userId, true);
-		String[] from = { TodoDao.C_CONTENT, TodoDao.C_DONE };
-		int[] to = { R.id.todoText, R.id.todoCheckbox };
+		String[] from = { TodoDao.C_CONTENT};
+		int[] to = { R.id.todoCheckbox};
 		listAdapter = new SimpleCursorAdapter(this, R.layout.todo_item, query, from, to,
 				SimpleCursorAdapter.FLAG_AUTO_REQUERY);
 		ViewBinder binder = new ViewBinder() {
 			@Override
 			public boolean setViewValue(View view, Cursor cursor, int colIdx) {
-				if (view.getId() == R.id.todoCheckbox && cursor.getColumnIndex(TodoDao.C_DONE) == colIdx) {
-					CheckBox box = (CheckBox) view;					
-					box.setChecked(!(cursor.getShort(colIdx) == 0));					
-					return true;
-				}			
+				if (view.getId() == R.id.todoCheckbox) {
+					final CheckBox box = (CheckBox) view;
+					box.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+						@Override
+						public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+							updateStrike(box);
+						}
+					});
+					box.setChecked(!(cursor.getShort(cursor.getColumnIndex(TodoDao.C_DONE)) == 0));
+					updateStrike(box);
+					//return false -> niech binder wywo³a jest setText
+				}
 				return false;
 			}
 		};
@@ -80,8 +87,8 @@ public class TodoListActivity extends ListActivity {
 		list.setAdapter(listAdapter);
 	}
 
-	private void updateStrike(CheckBox box, TextView text) {
-		text.setPaintFlags(box.isChecked() ? text.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG : text.getPaintFlags()
+	private void updateStrike(CheckBox box) {
+		box.setPaintFlags(box.isChecked() ? box.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG : box.getPaintFlags()
 				& ~Paint.STRIKE_THRU_TEXT_FLAG);
 	}
 
@@ -168,7 +175,8 @@ public class TodoListActivity extends ListActivity {
 					return null;
 				}
 			}
-			protected void onPostExecute(java.util.List<Todo> result) {				
+
+			protected void onPostExecute(java.util.List<Todo> result) {
 			};
 		}.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, token);
 	}
