@@ -1,13 +1,17 @@
 package org.rzymek.todoexpert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.rzymek.todoexpert.login.LoginActivity;
+import org.rzymek.todoexpert.login.LoginManager;
 
+import pl.allegro.todo.dao.Todo;
+import pl.allegro.todo.dao.TodoDao;
 import pl.allegro.todo.utils.HttpUtils;
 import pl.allegro.todo.utils.Utils;
 import android.app.AlertDialog;
@@ -18,48 +22,67 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.database.Cursor;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.EditText;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.SimpleCursorAdapter.ViewBinder;
+import android.widget.TextView;
 
 public class TodoListActivity extends ListActivity {
 
 	public static final String TAG = "TAG";
 	private static final int REQUEST_CODE = 123;
 	private ListView list;
-	private ArrayAdapter<Todo> listAdapter;
+	private SimpleCursorAdapter listAdapter;
+	private TodoDao dao;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (!Utils.getLoginManager(this).isLoggedIn()) {
+		LoginManager loginManager = Utils.getLoginManager(this);
+		if (!loginManager.isLoggedIn()) {
 			showLogin();
 			return;
 		}
 		setContentView(R.layout.activity_todo_list);
 		list = this.getListView();
-		listAdapter = new ArrayAdapter<Todo>(this, R.layout.todo_item, R.id.todoText) {
+
+		dao = new TodoDao(this);
+		Cursor query = dao.query(loginManager.userId, true);
+		String[] from = { TodoDao.C_CONTENT, TodoDao.C_DONE };
+		int[] to = { R.id.todoText, R.id.todoCheckbox };
+		listAdapter = new SimpleCursorAdapter(this, R.layout.todo_item, query, from, to,
+				SimpleCursorAdapter.FLAG_AUTO_REQUERY);
+		ViewBinder binder = new ViewBinder() {
 			@Override
-			public View getView(int idx, View convertView, ViewGroup parent) {
-				View view = super.getView(idx, convertView, parent);
-				Todo item = getItem(idx);
-				CheckBox box = (CheckBox) view.findViewById(R.id.todoCheckbox);
-				box.setChecked(item.completed);
-				EditText text = (EditText) view.findViewById(R.id.todoText);
-				text.setText(item.text);
-				view.setBackgroundResource(idx % 2 == 0 ? android.R.color.darker_gray : android.R.color.white);
-				return view;
+			public boolean setViewValue(View view, Cursor cursor, int colIdx) {
+				if (view.getId() == R.id.todoCheckbox && cursor.getColumnIndex(TodoDao.C_DONE) == colIdx) {
+					CheckBox box = (CheckBox) view;					
+					box.setChecked(!(cursor.getShort(colIdx) == 0));					
+					return true;
+				}			
+				return false;
 			}
 		};
+		listAdapter.setViewBinder(binder);
 		list.setAdapter(listAdapter);
-		refresh();
+	}
+
+	private void updateStrike(CheckBox box, TextView text) {
+		text.setPaintFlags(box.isChecked() ? text.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG : text.getPaintFlags()
+				& ~Paint.STRIKE_THRU_TEXT_FLAG);
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -134,7 +157,8 @@ public class TodoListActivity extends ListActivity {
 					List<Todo> ret = new ArrayList<>(results.length());
 					for (int i = 0; i < results.length(); i++) {
 						JSONObject object = (JSONObject) results.get(i);
-						Todo todo = new Todo(object.getString("content"), object.getBoolean("done"));
+						Todo todo = Todo.fromJsonObject(object);
+						dao.insertOrUpdate(todo);
 						ret.add(todo);
 					}
 					return ret;
@@ -144,17 +168,8 @@ public class TodoListActivity extends ListActivity {
 					return null;
 				}
 			}
-
-			@Override
-			protected void onPostExecute(List<Todo> result) {
-				if (result == null) {
-					Utils.toast(TodoListActivity.this, "Error: " + lastError);
-					List<Todo> empty = Collections.emptyList();
-					setItems(empty);
-					return;
-				}
-				setItems(result);
-			}
+			protected void onPostExecute(java.util.List<Todo> result) {				
+			};
 		}.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, token);
 	}
 
@@ -163,8 +178,4 @@ public class TodoListActivity extends ListActivity {
 		finish();
 	}
 
-	private void setItems(List<Todo> result) {
-		listAdapter.clear();
-		listAdapter.addAll(result);
-	}
 }

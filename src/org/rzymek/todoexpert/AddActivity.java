@@ -1,5 +1,6 @@
 package org.rzymek.todoexpert;
 
+import pl.allegro.todo.dao.Todo;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -42,7 +43,10 @@ public class AddActivity extends Activity {
 		}
 		boolean isDone = doneBox.isChecked();
 		Intent intent = new Intent();
-		intent.putExtra(RESULT, new Todo(text, isDone));
+		Todo todo = new Todo();
+		todo.content = text;
+		todo.done = isDone;
+		intent.putExtra(RESULT, todo);
 		setResult(RESULT_OK, intent);
 		finish();
 	} 
