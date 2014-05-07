@@ -1,7 +1,5 @@
 package org.rzymek.todoexpert;
 
-import java.io.IOException;
-
 import org.json.JSONObject;
 
 import pl.allegro.todo.utils.HttpUtils;
@@ -10,7 +8,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;

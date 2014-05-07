@@ -16,5 +16,6 @@
     <string name="title_activity_add">AddActivity</string>
     <string name="completed">Completed</string>
     <string name="describe">What to do?</string>
+    <string name="invalid_text">Enter some text at least %d characters long</string>
 
 </resources>

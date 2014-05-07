@@ -1,8 +1,6 @@
 package org.rzymek.todoexpert;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -68,11 +66,11 @@ public class TodoListActivity extends Activity {
 		}
 		case R.id.action_refresh: {
 			new AsyncTask<Void, Void, List<Todo>>() {
-				private Exception error;
+				private Exception lastError;
 
 				@Override
 				protected List<Todo> doInBackground(Void... params) {
-					error = null;
+					lastError = null;
 					try {
 						String tasks = HttpUtils.getTasks(token);
 						JSONObject result = new JSONObject(tasks);
@@ -80,14 +78,13 @@ public class TodoListActivity extends Activity {
 						List<Todo> ret = new ArrayList<>(results.length());
 						for (int i = 0; i < results.length(); i++) {
 							JSONObject object = (JSONObject) results.get(i);
-							Todo todo = new Todo(object.getString("content1"), object.getBoolean("done"));
+							Todo todo = new Todo(object.getString("content"), object.getBoolean("done"));
 							ret.add(todo);
 						}
-						throw new IOException("kicha"); 
-//						return ret;
+						return ret;
 					} catch (Exception e) {
 						e.printStackTrace();
-						error = e;
+						lastError = e;
 						return null;
 					}
 				}
@@ -97,7 +94,7 @@ public class TodoListActivity extends Activity {
 					if (result != null) {
 						Utils.toast(TodoListActivity.this, "Received: " + result);
 					} else {
-						Utils.toast(TodoListActivity.this, "" + error);
+						Utils.toast(TodoListActivity.this, "Error: " + lastError);
 					}
 				}
 			}.execute();

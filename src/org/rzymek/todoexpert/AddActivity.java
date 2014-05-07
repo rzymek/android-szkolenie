@@ -14,6 +14,7 @@ import android.widget.EditText;
 
 public class AddActivity extends Activity {
 	private static final String RESULT = "result";
+	private static final int MIN_LENGTH = 4;
 	private EditText itemText;
 	private CheckBox doneBox;
 
@@ -35,8 +36,8 @@ public class AddActivity extends Activity {
 
 	protected void addToDo() {
 		String text = itemText.getText().toString();
-		if(TextUtils.isEmpty(text) || text.length() < 3) {
-			itemText.setError("Enter some text at least 3 characters long");
+		if(TextUtils.isEmpty(text) || text.length() < MIN_LENGTH) {
+			itemText.setError(getString(R.string.invalid_text, MIN_LENGTH));
 			return;
 		}
 		boolean isDone = doneBox.isChecked();
