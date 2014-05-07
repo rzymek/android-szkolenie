@@ -13,8 +13,11 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -26,7 +29,13 @@ public class TodoListActivity extends Activity {
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		SharedPreferences store = PreferenceManager.getDefaultSharedPreferences(this);
+		String token = store.getString("token",null);
+		if(token == null) {
+			showLogin();
+			return;
+		}
+		setContentView(R.layout.activity_todo_list);
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -51,14 +60,18 @@ public class TodoListActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_logout: {
+			SharedPreferences store = PreferenceManager.getDefaultSharedPreferences(this);
+			Editor edit = store.edit();
+			edit.clear();
+			edit.apply();
+			
 			Builder builder = new AlertDialog.Builder(TodoListActivity.this);
 			builder.setTitle(R.string.confirm);
 			builder.setNegativeButton(android.R.string.no, null);
 			builder.setPositiveButton(android.R.string.yes, new OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					startActivity(new Intent(TodoListActivity.this, LoginActivity.class));
-					finish();
+					showLogin();
 				}
 			});
 			builder.create().show();
@@ -109,5 +122,10 @@ public class TodoListActivity extends Activity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	private void showLogin() {
+		startActivity(new Intent(this, LoginActivity.class));
+		finish();
 	}
 }

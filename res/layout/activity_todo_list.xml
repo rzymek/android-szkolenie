@@ -9,36 +9,10 @@
     tools:context="org.rzymek.todoexpert.LoginActivity"
     tools:ignore="MergeRootFrame" >
 
-    <EditText
-        android:id="@+id/user"
+    <ListView
+        android:id="@+id/todoItems"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="50dp"
-        android:hint="@string/username"
-        android:inputType="text" />
-
-    <EditText
-        android:id="@+id/pass"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:hint="@string/password"
-        android:inputType="textPassword" />
-
-    <Button
-        android:id="@+id/doLogin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/todo_button_selector"
-        android:text="@string/login" />
-
-    <ProgressBar
-        android:id="@+id/progress"
-        style="@android:style/Widget.Holo.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:max="5" />
+        android:layout_height="wrap_content" >
+    </ListView>
 
 </LinearLayout>

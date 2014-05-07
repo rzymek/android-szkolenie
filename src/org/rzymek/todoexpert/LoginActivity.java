@@ -1,12 +1,16 @@
 package org.rzymek.todoexpert;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import pl.allegro.todo.utils.HttpUtils;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,7 +64,7 @@ public class LoginActivity extends Activity {
 	}
 
 	private void login(String user, String pass) {
-		AsyncTask<String, Integer, JSONObject> task = new AsyncTask<String, Integer, JSONObject>() {
+		new AsyncTask<String, Integer, JSONObject>() {
 			protected void onPreExecute() {
 				doLogin.setEnabled(false);
 			}
@@ -83,21 +87,29 @@ public class LoginActivity extends Activity {
 
 			protected void onPostExecute(JSONObject result) {
 				doLogin.setEnabled(true);
-				if(result == null) {
+				if (result == null) {
 					Utils.toast(LoginActivity.this, "Login ERROR");
 					return;
-				}				
+				}
 				if (result.has("error")) {
-					Utils.toast(LoginActivity.this, "Login failed: "+result.optString("error"));
+					Utils.toast(LoginActivity.this, "Login failed: " + result.optString("error"));
+					return;
+				}
+				try {
+					SharedPreferences store = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+					Editor edit = store.edit();
+					edit.putString("token", result.getString("sessionToken"));
+					edit.putString("userId", result.getString("objectId"));
+					edit.apply();
+				} catch (JSONException e) {
+					Utils.toast(LoginActivity.this, "Failed to read sessionToken: " + e);
 					return;
 				}
 				Intent intent = new Intent(LoginActivity.this, TodoListActivity.class);
-				intent.putExtra("token", result.optString("sessionToken"));
 				startActivity(intent);
 				finish();
 			}
-		};
-		task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, user, pass);
+		}.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, user, pass);
 	}
 
 	protected void toast(String string) {
