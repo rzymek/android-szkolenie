@@ -21,10 +21,13 @@ import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ListView;
 
 public class TodoListActivity extends Activity {
@@ -36,13 +39,25 @@ public class TodoListActivity extends Activity {
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(!Utils.getLoginManager(this).isLoggedIn()) {
+		if (!Utils.getLoginManager(this).isLoggedIn()) {
 			showLogin();
-			return;			
+			return;
 		}
 		setContentView(R.layout.activity_todo_list);
 		list = (ListView) findViewById(R.id.todoItems);
-		listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+		listAdapter = new ArrayAdapter<Todo>(this, R.layout.todo_item, R.id.todoText) {
+			@Override
+			public View getView(int idx, View convertView, ViewGroup parent) {
+				View view = super.getView(idx, convertView, parent);
+				Todo item = getItem(idx);
+				CheckBox box = (CheckBox) view.findViewById(R.id.todoCheckbox);
+				box.setChecked(item.completed);
+				EditText text = (EditText) view.findViewById(R.id.todoText);
+				text.setText(item.text);
+				view.setBackgroundResource(idx % 2 == 0 ? android.R.color.darker_gray : android.R.color.white);
+				return view;
+			}
+		};
 		list.setAdapter(listAdapter);
 		refresh();
 	}
@@ -68,12 +83,12 @@ public class TodoListActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_logout: {
-			
+
 			SharedPreferences store = PreferenceManager.getDefaultSharedPreferences(this);
 			Editor edit = store.edit();
 			edit.clear();
 			edit.apply();
-			
+
 			Builder builder = new AlertDialog.Builder(TodoListActivity.this);
 			builder.setTitle(R.string.confirm);
 			builder.setNegativeButton(android.R.string.no, null);
@@ -109,7 +124,7 @@ public class TodoListActivity extends Activity {
 			protected void onPreExecute() {
 				lastError = null;
 			}
-			
+
 			@Override
 			protected List<Todo> doInBackground(String... params) {
 				try {
@@ -134,7 +149,7 @@ public class TodoListActivity extends Activity {
 			protected void onPostExecute(List<Todo> result) {
 				if (result == null) {
 					Utils.toast(TodoListActivity.this, "Error: " + lastError);
-					List<Todo> empty=Collections.emptyList();
+					List<Todo> empty = Collections.emptyList();
 					setItems(empty);
 					return;
 				}
@@ -149,7 +164,6 @@ public class TodoListActivity extends Activity {
 	}
 
 	private void setItems(List<Todo> result) {
-		Log.i("XXX", ""+result);
 		listAdapter.clear();
 		listAdapter.addAll(result);
 	}

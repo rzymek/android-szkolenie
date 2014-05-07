@@ -5,15 +5,15 @@
     android:orientation="horizontal" >
 
     <CheckBox
-        android:id="@+id/checkBox1"
+        android:id="@+id/todoCheckbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="" />
 
-    <TextView
-        android:id="@+id/textView1"
+    <EditText
+        android:id="@+id/todoText"
+        android:inputType="text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
