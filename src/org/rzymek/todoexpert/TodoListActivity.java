@@ -69,11 +69,12 @@ public class TodoListActivity extends ListActivity {
 		setContentView(R.layout.activity_todo_list);
 		list = this.getListView();
 
-		dao = new TodoDao(this);
+		TodoApp app = (TodoApp) getApplication();
+		dao = app.dao;
 		Cursor query = fetch();
 		String[] from = { TodoDao.C_CONTENT };
 		int[] to = { R.id.todoCheckbox };
-		listAdapter = new SimpleCursorAdapter(this, R.layout.todo_item, query, from, to, SimpleCursorAdapter.FLAG_AUTO_REQUERY) {
+		listAdapter = new SimpleCursorAdapter(this, R.layout.todo_item, query, from, to, 0) {
 			@Override
 			public View getView(int idx, View convertView, ViewGroup parent) {
 				View view = super.getView(idx, convertView, parent);
@@ -127,6 +128,7 @@ public class TodoListActivity extends ListActivity {
 		if (requestCode == REQUEST_CODE) {
 			Todo result = (Todo) data.getExtras().get("result");
 			Utils.toast(this, "Result:" + result);
+			listAdapter.swapCursor(fetch());
 		}
 	}
 

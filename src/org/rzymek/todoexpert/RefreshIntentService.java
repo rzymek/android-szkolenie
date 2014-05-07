@@ -25,7 +25,7 @@ public class RefreshIntentService extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		TodoApp app = (TodoApp) getApplication();
-		
+
 		long createdAt = app.dao.getLatestCreatedAtTime(app.getLoginManager().userId);
 		int newItems = 0;
 		try {
@@ -36,8 +36,8 @@ public class RefreshIntentService extends IntentService {
 			for (int i = 0; i < results.length(); i++) {
 				JSONObject object = (JSONObject) results.get(i);
 				Todo todo = Todo.fromJsonObject(object);
-				Log.i(TAG, ""+todo);
-				if(todo.createdAt.getTime() > createdAt) {
+				Log.i(TAG, "" + todo);
+				if (todo.createdAt.getTime() > createdAt) {
 					newItems++;
 				}
 				app.dao.insertOrUpdate(todo);
@@ -50,19 +50,16 @@ public class RefreshIntentService extends IntentService {
 	}
 
 	private void notifyOfNew(int newItems) {
-		String msg = "New items: "+newItems;
+		String msg = "New items: " + newItems;
 		NotificationManager service = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		NotificationCompat.Builder b = new NotificationCompat.Builder(getApplicationContext());
 		b.setAutoCancel(true);
 		b.setContentText("New TODOs");
 		b.setContentText(msg);
 		b.setSmallIcon(R.drawable.ic_launcher);
-		b.setContentIntent(PendingIntent.getActivity(this, 1,
-				new Intent(this, TodoListActivity.class)
-				, PendingIntent.FLAG_CANCEL_CURRENT));
-		service.notify(1, b.build());
-//		service.notify(id, notification);
-	 	
+		Intent intent = new Intent(this, TodoListActivity.class);		
+		b.setContentIntent(PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT));
+		service.notify(2, b.build());
 	}
 
 }
