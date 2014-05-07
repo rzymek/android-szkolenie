@@ -121,5 +121,8 @@ public class Todo implements Serializable {
         jsonObject.put("done", done);
         return jsonObject.toString();
     }
-
+    @Override
+    public String toString() {
+    	return "["+done+"] "+content;
+    }
 }

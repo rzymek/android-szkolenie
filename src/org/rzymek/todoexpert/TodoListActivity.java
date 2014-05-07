@@ -1,28 +1,24 @@
 package org.rzymek.todoexpert;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.rzymek.todoexpert.login.LoginActivity;
 import org.rzymek.todoexpert.login.LoginManager;
 
 import pl.allegro.todo.dao.Todo;
 import pl.allegro.todo.dao.TodoDao;
-import pl.allegro.todo.utils.HttpUtils;
 import pl.allegro.todo.utils.Utils;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ListActivity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Paint;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -45,6 +41,23 @@ public class TodoListActivity extends ListActivity {
 	private TodoDao dao;
 	private LoginManager loginManager;
 
+	private BroadcastReceiver receiver = new BroadcastReceiver(){
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			listAdapter.swapCursor(fetch());
+		}
+	};
+	
+	protected void onPause() {
+		super.onPause();
+		unregisterReceiver(receiver);
+	};
+	protected void onResume() {
+		super.onResume();
+		IntentFilter filter = new IntentFilter(RefreshIntentService.REFRESH);
+		registerReceiver(receiver, filter);
+		
+	};
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		loginManager = Utils.getLoginManager(this);
@@ -59,7 +72,7 @@ public class TodoListActivity extends ListActivity {
 		Cursor query = fetch();
 		String[] from = { TodoDao.C_CONTENT };
 		int[] to = { R.id.todoCheckbox };
-		listAdapter = new SimpleCursorAdapter(this, R.layout.todo_item, query, from, to, 0) {
+		listAdapter = new SimpleCursorAdapter(this, R.layout.todo_item, query, from, to, SimpleCursorAdapter.FLAG_AUTO_REQUERY) {
 			@Override
 			public View getView(int idx, View convertView, ViewGroup parent) {
 				View view = super.getView(idx, convertView, parent);
@@ -138,7 +151,7 @@ public class TodoListActivity extends ListActivity {
 			return true;
 		}
 		case R.id.action_refresh: {
-			refresh();
+			startService(new Intent(this, RefreshIntentService.class));
 			return true;
 		}
 		case R.id.action_add: {
@@ -153,43 +166,7 @@ public class TodoListActivity extends ListActivity {
 	}
 
 	private void refresh() {
-		String token = Utils.getLoginManager(this).token;
-		new AsyncTask<String, Void, List<Todo>>() {
-			private Exception lastError;
-
-			protected void onPreExecute() {
-				lastError = null;
-			}
-
-			@Override
-			protected List<Todo> doInBackground(String... params) {
-				try {
-					String tasks = HttpUtils.getTasks(params[0]);
-					JSONObject result = new JSONObject(tasks);
-					JSONArray results = result.getJSONArray("results");
-					List<Todo> ret = new ArrayList<>(results.length());
-					for (int i = 0; i < results.length(); i++) {
-						JSONObject object = (JSONObject) results.get(i);
-						Todo todo = Todo.fromJsonObject(object);
-						dao.insertOrUpdate(todo);
-						ret.add(todo);
-					}
-					return ret;
-				} catch (Exception e) {
-					e.printStackTrace();
-					lastError = e;
-					return null;
-				}
-			}
-
-			protected void onPostExecute(java.util.List<Todo> result) {
-				if (lastError != null) {
-					Utils.toast(TodoListActivity.this, "" + lastError);
-					return;
-				}
-				listAdapter.swapCursor(fetch());
-			};
-		}.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, token);
+		startService(new Intent(this, RefreshIntentService.class));
 	}
 
 	private void showLogin() {
