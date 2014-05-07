@@ -1,11 +1,21 @@
 package org.rzymek.todoexpert;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import pl.allegro.todo.utils.HttpUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,14 +24,16 @@ public class TodoListActivity extends Activity {
 
 	public static final String TAG = "TAG";
 	private static final int REQUEST_CODE = 123;
-	private static final String LOG = "!!!!!";
+	private String token;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.todo_list_menu, menu);
+		token = getIntent().getStringExtra("token");
 		return true;
 	}
 
@@ -52,6 +64,43 @@ public class TodoListActivity extends Activity {
 				}
 			});
 			builder.create().show();
+			return true;
+		}
+		case R.id.action_refresh: {
+			new AsyncTask<Void, Void, List<Todo>>() {
+				private Exception error;
+
+				@Override
+				protected List<Todo> doInBackground(Void... params) {
+					error = null;
+					try {
+						String tasks = HttpUtils.getTasks(token);
+						JSONObject result = new JSONObject(tasks);
+						JSONArray results = result.getJSONArray("results");
+						List<Todo> ret = new ArrayList<>(results.length());
+						for (int i = 0; i < results.length(); i++) {
+							JSONObject object = (JSONObject) results.get(i);
+							Todo todo = new Todo(object.getString("content1"), object.getBoolean("done"));
+							ret.add(todo);
+						}
+						throw new IOException("kicha"); 
+//						return ret;
+					} catch (Exception e) {
+						e.printStackTrace();
+						error = e;
+						return null;
+					}
+				}
+
+				@Override
+				protected void onPostExecute(List<Todo> result) {
+					if (result != null) {
+						Utils.toast(TodoListActivity.this, "Received: " + result);
+					} else {
+						Utils.toast(TodoListActivity.this, "" + error);
+					}
+				}
+			}.execute();
 			return true;
 		}
 		case R.id.action_add: {

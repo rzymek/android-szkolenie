@@ -3,6 +3,7 @@ package org.rzymek.todoexpert;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +35,10 @@ public class AddActivity extends Activity {
 
 	protected void addToDo() {
 		String text = itemText.getText().toString();
+		if(TextUtils.isEmpty(text) || text.length() < 3) {
+			itemText.setError("Enter some text at least 3 characters long");
+			return;
+		}
 		boolean isDone = doneBox.isChecked();
 		Intent intent = new Intent();
 		intent.putExtra(RESULT, new Todo(text, isDone));

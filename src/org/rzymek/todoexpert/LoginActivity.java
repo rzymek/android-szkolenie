@@ -95,6 +95,7 @@ public class LoginActivity extends Activity {
 					return;
 				}
 				Intent intent = new Intent(LoginActivity.this, TodoListActivity.class);
+				intent.putExtra("token", result.optString("sessionToken"));
 				startActivity(intent);
 				finish();
 			}

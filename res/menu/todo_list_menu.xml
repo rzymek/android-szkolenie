@@ -2,12 +2,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="org.rzymek.todoexpert.LoginActivity" >
 
-    <item android:id="@+id/action_add"
-        android:showAsAction="ifRoom"
+    <item
+        android:id="@+id/action_add"
         android:icon="@drawable/ic_action_new"
-        android:title="@string/add_todo"
-        android:orderInCategory="100"/>
-    
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/add_todo"/>
+    <item
+        android:id="@+id/action_refresh"
+        android:icon="@drawable/ic_action_refresh"
+        android:orderInCategory="110"
+        android:showAsAction="ifRoom"
+        android:title="@string/refresh"/>
     <item
         android:id="@+id/action_logout"
         android:orderInCategory="150"
