@@ -9,7 +9,11 @@ import org.json.JSONObject;
 import pl.allegro.todo.dao.Todo;
 import pl.allegro.todo.utils.HttpUtils;
 import pl.allegro.todo.utils.Utils;
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.AuthenticatorDescription;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -50,16 +54,15 @@ public class AddActivity extends Activity {
 		if (savedInstanceState == null && intent != null) {
 			Log.d(TAG, "intent != null");
 			if (Intent.ACTION_SEND.equals(intent.getAction())) {
-				Log.d(TAG, "intent.getAction().equals(Intent.ACTION_SEND)");
-				Bundle ex = intent.getExtras();
-				Set<String> keySet = ex.keySet();
-				String s = "";
-				for (String key : keySet) {
-					s += key + ":" + ex.get(key) + "\n";
-				}
+//				Bundle ex = intent.getExtras();
+//				Set<String> keySet = ex.keySet();
+//				String s = "";
+//				for (String key : keySet) {
+//					s += key + ":" + ex.get(key) + "\n";
+//				}
 				String message = intent.getStringExtra(Intent.EXTRA_TEXT);
 				String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
-				itemText.setText(s);
+				itemText.setText(subject+"\n"+message);
 			}
 		}
 	}
@@ -134,6 +137,17 @@ public class AddActivity extends Activity {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
+			AccountManager service = (AccountManager) getSystemService(Context.ACCOUNT_SERVICE);
+			Account[] accounts = service.getAccounts();
+			for (Account account : accounts) {
+				Log.i("ACNT",account.type+":"+account.name);				
+			}
+			Log.i("--","--------------");
+			AuthenticatorDescription[] authenticatorTypes = service.getAuthenticatorTypes();
+			for (AuthenticatorDescription desc : authenticatorTypes) {
+				Log.i("DESC",desc.toString());								
+			}
+			Account[] accountsByType = service.getAccountsByType("com.github");
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
