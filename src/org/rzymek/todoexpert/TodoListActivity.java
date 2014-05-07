@@ -52,6 +52,7 @@ public class TodoListActivity extends ListActivity {
 		super.onPause();
 		unregisterReceiver(receiver);
 	};
+	
 	protected void onResume() {
 		super.onResume();
 		IntentFilter filter = new IntentFilter(RefreshIntentService.REFRESH);

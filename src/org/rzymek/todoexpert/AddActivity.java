@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,11 +17,13 @@ import android.widget.EditText;
 public class AddActivity extends Activity {
 	private static final String RESULT = "result";
 	private static final int MIN_LENGTH = 4;
+	private static final String TAG = "XXXX";
 	private EditText itemText;
 	private CheckBox doneBox;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Intent intent = getIntent();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add);
 		itemText = (EditText) findViewById(R.id.itemText);
@@ -33,6 +36,15 @@ public class AddActivity extends Activity {
 				addToDo();
 			}
 		});
+		if (savedInstanceState == null && intent != null) {
+		    Log.d(TAG, "intent != null");
+		    if (intent.getAction().equals(Intent.ACTION_SEND)) {
+		        Log.d(TAG, "intent.getAction().equals(Intent.ACTION_SEND)");
+		        String message = intent.getStringExtra(Intent.EXTRA_TEXT);
+		        String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
+		        itemText.setText(subject+"\n"+message);
+		    }
+		}
 	}
 
 	protected void addToDo() {
