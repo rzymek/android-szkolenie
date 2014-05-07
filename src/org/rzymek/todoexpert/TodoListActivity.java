@@ -1,8 +1,6 @@
 package org.rzymek.todoexpert;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -27,19 +25,16 @@ import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.SimpleCursorAdapter.ViewBinder;
-import android.widget.TextView;
 
 public class TodoListActivity extends ListActivity {
 
@@ -48,10 +43,11 @@ public class TodoListActivity extends ListActivity {
 	private ListView list;
 	private SimpleCursorAdapter listAdapter;
 	private TodoDao dao;
+	private LoginManager loginManager;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		LoginManager loginManager = Utils.getLoginManager(this);
+		loginManager = Utils.getLoginManager(this);
 		if (!loginManager.isLoggedIn()) {
 			showLogin();
 			return;
@@ -60,11 +56,10 @@ public class TodoListActivity extends ListActivity {
 		list = this.getListView();
 
 		dao = new TodoDao(this);
-		Cursor query = dao.query(loginManager.userId, true);
+		Cursor query = fetch();
 		String[] from = { TodoDao.C_CONTENT};
 		int[] to = { R.id.todoCheckbox};
-		listAdapter = new SimpleCursorAdapter(this, R.layout.todo_item, query, from, to,
-				SimpleCursorAdapter.FLAG_AUTO_REQUERY){
+		listAdapter = new SimpleCursorAdapter(this, R.layout.todo_item, query, from, to, 0){
 			@Override
 			public View getView(int idx, View convertView, ViewGroup parent) {
 				View view = super.getView(idx, convertView, parent);
@@ -92,6 +87,10 @@ public class TodoListActivity extends ListActivity {
 		};
 		listAdapter.setViewBinder(binder);
 		list.setAdapter(listAdapter);
+	}
+
+	private Cursor fetch() {
+		return dao.query(loginManager.userId, true);
 	}
 
 	private void updateStrike(CheckBox box) {
@@ -184,6 +183,7 @@ public class TodoListActivity extends ListActivity {
 			}
 
 			protected void onPostExecute(java.util.List<Todo> result) {
+				listAdapter.swapCursor(fetch());
 			};
 		}.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, token);
 	}
