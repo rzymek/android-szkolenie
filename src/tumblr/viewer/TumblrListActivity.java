@@ -3,6 +3,7 @@ package tumblr.viewer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -42,8 +43,9 @@ public class TumblrListActivity extends ActionBarActivity implements
 	public void onNavigationDrawerItemSelected(int position) {
 		// update the main content by replacing fragments
 		FragmentManager fragmentManager = getSupportFragmentManager();
-		fragmentManager.beginTransaction().replace(R.id.container, PostsListFragment.newInstance(position + 1))
-				.commit();
+		FragmentTransaction tx = fragmentManager.beginTransaction();
+		tx.replace(R.id.container, PostsListFragment.newInstance(position + 1));
+		tx.commit();
 	}
 
 	public void onSectionAttached(int number) {
@@ -53,9 +55,6 @@ public class TumblrListActivity extends ActionBarActivity implements
 			break;
 		case 2:
 			mTitle = getString(R.string.title_section2);
-			break;
-		case 3:
-			mTitle = getString(R.string.title_section3);
 			break;
 		}
 	}

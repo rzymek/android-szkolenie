@@ -106,7 +106,7 @@ public class PostsListFragment extends ListFragment {
 				holder.text = (TextView) convertView.findViewById(R.id.post_caption);
 				holder.image = (ImageView) convertView.findViewById(R.id.post_photo);
 
-//				holder.text.setText(Html.fromHtml(post.getCaption()));
+				// holder.text.setText(Html.fromHtml(post.getCaption()));
 				AQuery q = new AQuery(convertView);
 				List<Photo> photos = post.getPhotos();
 				if (photos != null && photos.size() > 0) {
@@ -121,7 +121,7 @@ public class PostsListFragment extends ListFragment {
 		setListAdapter(adapter);
 
 		AQuery q = new AQuery(getActivity().getApplicationContext());
-		String tumblrName = "wehavethemunchies";
+		String tumblrName = getTName();
 		String url = "http://api.tumblr.com/v2/blog/" + tumblrName + ".tumblr.com/posts?api_key=" + TUMBLR_API_KEY
 				+ "&limit=20&" + "offset=0";
 		System.out.println(url);
@@ -145,6 +145,17 @@ public class PostsListFragment extends ListFragment {
 			}
 
 		});
+	}
+
+	private String getTName() {
+		int section = getArguments().getInt(ARG_SECTION_NUMBER);
+		switch (section) {
+		case 1:
+			return "wehavethemunchies";
+		case 2:
+			return "veganfoody";
+		}
+		throw new IllegalArgumentException("unsupported section:" + section);
 	}
 
 	@Override
