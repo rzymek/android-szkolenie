@@ -59,11 +59,37 @@ public class PostsListFragment extends ListFragment {
 		ImageView image;
 	}
 
+	public interface Callback {
+		void openUrl(String url);
+	}
+
+	Callback noop = new Callback() {
+		public void openUrl(String url) {
+		};
+	};
+
+	Callback callback = noop;
+
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		Post post = adapter.getItem(position);
+		String url = post.getPost_url();
+		callback.openUrl(url);
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (savedInstanceState == null) {
 			adapter = new ArrayAdapter<Post>(getActivity(), R.layout.posts_list_item, R.id.post_caption) {
+
+				@Override
+				public long getItemId(int position) {
+					// zwracanie unikalny id to optymalizacja
+					// @see: http://www.youtube.com/watch?v=wDBM6wVEO70
+					return super.getItemId(position);
+				}
+
 				@Override
 				public View getView(int position, View convertView, ViewGroup parent) {
 					if (convertView == null) {
@@ -119,19 +145,11 @@ public class PostsListFragment extends ListFragment {
 		});
 	}
 
-	// @Override
-	// public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	// Bundle savedInstanceState) {
-	// View rootView = inflater.inflate(R.layout.fragment_tumblr_list,
-	// container, false);
-	// TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-	// textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
-	// return rootView;
-	// }
-
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		((TumblrListActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
+		
+		callback = (Callback) activity;
 	}
 }

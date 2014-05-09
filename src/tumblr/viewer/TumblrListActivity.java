@@ -7,8 +7,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
-public class TumblrListActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+public class TumblrListActivity extends ActionBarActivity implements
+		NavigationDrawerFragment.NavigationDrawerCallbacks, PostsListFragment.Callback {
 
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the
@@ -87,6 +89,11 @@ public class TumblrListActivity extends ActionBarActivity implements NavigationD
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void openUrl(String url) {
+		Toast.makeText(this, url, Toast.LENGTH_SHORT).show();		
 	}
 
 }
