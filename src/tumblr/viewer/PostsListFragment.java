@@ -63,12 +63,15 @@ public class PostsListFragment extends ListFragment {
 		void openUrl(String url);
 	}
 
-	Callback noop = new Callback() {
-		public void openUrl(String url) {
-		};
-	};
+	Callback callback;
 
-	Callback callback = noop;
+	@Override
+	public void onDetach() {
+		callback = new Callback() {
+			public void openUrl(String url) {
+			};
+		};
+	}
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
@@ -149,7 +152,7 @@ public class PostsListFragment extends ListFragment {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		((TumblrListActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
-		
+
 		callback = (Callback) activity;
 	}
 }
