@@ -63,10 +63,32 @@ public class PostsListFragment extends ListFragment {
 		if (savedInstanceState == null) {
 			adapter = new ArrayAdapter<Post>(getActivity(), R.layout.posts_list_item, R.id.post_caption) {
 				@Override
+				public int getViewTypeCount() {
+					return 2;
+				}
+
+				@Override
+				public int getItemViewType(int position) {
+					// zwroc [0,getViewTypeCount()> - rozne layouty dla position
+					return super.getItemViewType(position);
+				}
+
+				@Override
 				public View getView(int position, View convertView, ViewGroup parent) {
 					if (convertView == null) {
-						LayoutInflater inf = LayoutInflater.from(getContext());
-						convertView = inf.inflate(R.layout.posts_list_item, parent, false);
+						switch (getItemViewType(position)) {
+						case 0: {
+							LayoutInflater inf = LayoutInflater.from(getContext());
+							convertView = inf.inflate(R.layout.posts_list_item, parent, false);
+							break;
+						}
+						case 1: {
+							LayoutInflater inf = LayoutInflater.from(getContext());
+							// inny typ
+							convertView = inf.inflate(R.layout.posts_list_item, parent, false);
+							break;
+						}
+						}
 					}
 					ViewHolder holder = (ViewHolder) convertView.getTag();
 					if (holder == null) {
