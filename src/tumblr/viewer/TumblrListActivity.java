@@ -94,10 +94,15 @@ public class TumblrListActivity extends ActionBarActivity implements
 
 	@Override
 	public void openUrl(String url) {
-		Toast.makeText(this, url, Toast.LENGTH_SHORT).show();
-		Intent intent = new Intent(this, DetailsActivity.class);
-		intent.putExtra("url", url);
-		startActivity(intent);
+		if (findViewById(R.id.details_container) == null) {
+			Toast.makeText(this, url, Toast.LENGTH_SHORT).show();
+			Intent intent = new Intent(this, DetailsActivity.class);
+			intent.putExtra("url", url);
+			startActivity(intent);
+		} else {
+			getSupportFragmentManager().beginTransaction()
+					.replace(R.id.details_container, DetailsFragment.newInstance(url)).commit();
+		}
 	}
 
 }

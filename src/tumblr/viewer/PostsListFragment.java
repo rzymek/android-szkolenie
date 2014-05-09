@@ -83,44 +83,43 @@ public class PostsListFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (savedInstanceState == null) {
-			adapter = new ArrayAdapter<Post>(getActivity(), R.layout.posts_list_item, R.id.post_caption) {
+		adapter = new ArrayAdapter<Post>(getActivity(), R.layout.posts_list_item, R.id.post_caption) {
 
-				@Override
-				public long getItemId(int position) {
-					// zwracanie unikalny id to optymalizacja
-					// @see: http://www.youtube.com/watch?v=wDBM6wVEO70
-					return super.getItemId(position);
+			@Override
+			public long getItemId(int position) {
+				// zwracanie unikalny id to optymalizacja
+				// @see: http://www.youtube.com/watch?v=wDBM6wVEO70
+				return super.getItemId(position);
+			}
+
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				if (convertView == null) {
+					LayoutInflater inf = LayoutInflater.from(getContext());
+					convertView = inf.inflate(R.layout.posts_list_item, parent, false);
 				}
-
-				@Override
-				public View getView(int position, View convertView, ViewGroup parent) {
-					if (convertView == null) {
-						LayoutInflater inf = LayoutInflater.from(getContext());
-						convertView = inf.inflate(R.layout.posts_list_item, parent, false);
-					}
-					ViewHolder holder = (ViewHolder) convertView.getTag();
-					if (holder == null) {
-						convertView.setTag(holder = new ViewHolder());
-					}
-					Post post = getItem(position);
-					holder.text = (TextView) convertView.findViewById(R.id.post_caption);
-					holder.image = (ImageView) convertView.findViewById(R.id.post_photo);
-
-					holder.text.setText(Html.fromHtml(post.getCaption()));
-					AQuery q = new AQuery(convertView);
-					List<Photo> photos = post.getPhotos();
-					if (photos != null && photos.size() > 0) {
-						Original_size photo = photos.get(0).getOriginal_size();
-						q.id(holder.image).image(photo.getUrl(), true, true, convertView.getWidth(), 0);
-					}
-					return convertView;
+				ViewHolder holder = (ViewHolder) convertView.getTag();
+				if (holder == null) {
+					convertView.setTag(holder = new ViewHolder());
 				}
-			};
-			// adapter = new ArrayAdapter<Post>(getActivity(),
-			// android.R.layout.simple_list_item_1);
-			setListAdapter(adapter);
-		}
+				Post post = getItem(position);
+				holder.text = (TextView) convertView.findViewById(R.id.post_caption);
+				holder.image = (ImageView) convertView.findViewById(R.id.post_photo);
+
+//				holder.text.setText(Html.fromHtml(post.getCaption()));
+				AQuery q = new AQuery(convertView);
+				List<Photo> photos = post.getPhotos();
+				if (photos != null && photos.size() > 0) {
+					Original_size photo = photos.get(0).getOriginal_size();
+					q.id(holder.image).image(photo.getUrl(), true, true, convertView.getWidth(), 0);
+				}
+				return convertView;
+			}
+		};
+		// adapter = new ArrayAdapter<Post>(getActivity(),
+		// android.R.layout.simple_list_item_1);
+		setListAdapter(adapter);
+
 		AQuery q = new AQuery(getActivity().getApplicationContext());
 		String tumblrName = "wehavethemunchies";
 		String url = "http://api.tumblr.com/v2/blog/" + tumblrName + ".tumblr.com/posts?api_key=" + TUMBLR_API_KEY
