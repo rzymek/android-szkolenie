@@ -106,12 +106,14 @@ public class PostsListFragment extends ListFragment {
 				holder.text = (TextView) convertView.findViewById(R.id.post_caption);
 				holder.image = (ImageView) convertView.findViewById(R.id.post_photo);
 
-				// holder.text.setText(Html.fromHtml(post.getCaption()));
+				holder.text.setText(Html.fromHtml(post.getCaption()));
 				AQuery q = new AQuery(convertView);
 				List<Photo> photos = post.getPhotos();
 				if (photos != null && photos.size() > 0) {
 					Original_size photo = photos.get(0).getOriginal_size();
-					q.id(holder.image).image(photo.getUrl(), true, true, convertView.getWidth(), 0);
+					q.id(holder.image).image(photo.getUrl(), true, true, convertView.getWidth(), 0, null, 
+							AQuery.FADE_IN_NETWORK, 
+							photo.getHeight()/(float)photo.getWidth());
 				}
 				return convertView;
 			}
