@@ -1,5 +1,6 @@
 package tumblr.viewer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -93,7 +94,10 @@ public class TumblrListActivity extends ActionBarActivity implements
 
 	@Override
 	public void openUrl(String url) {
-		Toast.makeText(this, url, Toast.LENGTH_SHORT).show();		
+		Toast.makeText(this, url, Toast.LENGTH_SHORT).show();
+		Intent intent = new Intent(this, DetailsActivity.class);
+		intent.putExtra("url", url);
+		startActivity(intent);
 	}
 
 }
