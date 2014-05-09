@@ -11,6 +11,10 @@
         android:layout_height="match_parent"
         android:orientation="horizontal" >
 
+        <!--
+        android:layout_width="0dp" - istotne i lepsze niż wrap_content
+        bez layout_width raczej się nie zbuduje  
+         -->
         <FrameLayout
             android:id="@+id/container"
             android:layout_width="0dp"
