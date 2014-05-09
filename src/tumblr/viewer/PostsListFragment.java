@@ -2,19 +2,23 @@ package tumblr.viewer;
 
 import java.util.List;
 
+import tumblr.viewer.json.Original_size;
+import tumblr.viewer.json.Photo;
 import tumblr.viewer.json.Post;
 import tumblr.viewer.json.PostResponse;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -55,12 +59,21 @@ public class PostsListFragment extends ListFragment {
 			adapter = new ArrayAdapter<Post>(getActivity(), R.layout.posts_list_item, R.id.post_caption){
 				@Override
 				public View getView(int position, View convertView, ViewGroup parent) {
-					View view = super.getView(position, convertView, parent);
-//					if(convertView == null) {
-//						LayoutInflater inf = LayoutInflater.from(getContext());
-//						convertView = inf.inflate(R.layout.posts_list_item, root)
-//					}
-					return view;
+					if(convertView == null) {
+						LayoutInflater inf = LayoutInflater.from(getContext());
+						convertView = inf.inflate(R.layout.posts_list_item, parent, false);
+					}
+					Post post = getItem(position);
+					TextView text = (TextView) convertView.findViewById(R.id.post_caption);
+					text.setText(Html.fromHtml(post.getCaption()));
+					
+					AQuery q = new AQuery(convertView);
+					List<Photo> photos = post.getPhotos();
+					if(photos!=null && photos.size()>0){
+						Original_size photo = photos.get(0).getOriginal_size();
+						q.id(R.id.post_photo).image(photo.getUrl(), true, true, convertView.getWidth(), 0);
+					}
+					return convertView;
 				}
 			};
 //			adapter = new ArrayAdapter<Post>(getActivity(), android.R.layout.simple_list_item_1);
