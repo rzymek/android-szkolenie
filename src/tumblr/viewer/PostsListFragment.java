@@ -66,6 +66,7 @@ public class PostsListFragment extends ListFragment {
 
 	@Override
 	public void onDetach() {
+		super.onDetach();
 		callback = new Callback() {
 			public void openUrl(String url) {
 			};
