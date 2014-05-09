@@ -52,31 +52,42 @@ public class PostsListFragment extends ListFragment {
 	public PostsListFragment() {
 	}
 
+	class ViewHolder {
+		TextView text;
+		ImageView image;
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(savedInstanceState == null) {
-			adapter = new ArrayAdapter<Post>(getActivity(), R.layout.posts_list_item, R.id.post_caption){
+		if (savedInstanceState == null) {
+			adapter = new ArrayAdapter<Post>(getActivity(), R.layout.posts_list_item, R.id.post_caption) {
 				@Override
 				public View getView(int position, View convertView, ViewGroup parent) {
-					if(convertView == null) {
+					if (convertView == null) {
 						LayoutInflater inf = LayoutInflater.from(getContext());
 						convertView = inf.inflate(R.layout.posts_list_item, parent, false);
 					}
+					ViewHolder holder = (ViewHolder) convertView.getTag();
+					if (holder == null) {
+						convertView.setTag(holder = new ViewHolder());
+					}
 					Post post = getItem(position);
-					TextView text = (TextView) convertView.findViewById(R.id.post_caption);
-					text.setText(Html.fromHtml(post.getCaption()));
-					
+					holder.text = (TextView) convertView.findViewById(R.id.post_caption);
+					holder.image = (ImageView) convertView.findViewById(R.id.post_photo);
+
+					holder.text.setText(Html.fromHtml(post.getCaption()));
 					AQuery q = new AQuery(convertView);
 					List<Photo> photos = post.getPhotos();
-					if(photos!=null && photos.size()>0){
+					if (photos != null && photos.size() > 0) {
 						Original_size photo = photos.get(0).getOriginal_size();
-						q.id(R.id.post_photo).image(photo.getUrl(), true, true, convertView.getWidth(), 0);
+						q.id(holder.image).image(photo.getUrl(), true, true, convertView.getWidth(), 0);
 					}
 					return convertView;
 				}
 			};
-//			adapter = new ArrayAdapter<Post>(getActivity(), android.R.layout.simple_list_item_1);
+			// adapter = new ArrayAdapter<Post>(getActivity(),
+			// android.R.layout.simple_list_item_1);
 			setListAdapter(adapter);
 		}
 		AQuery q = new AQuery(getActivity().getApplicationContext());
@@ -90,13 +101,13 @@ public class PostsListFragment extends ListFragment {
 			@Override
 			public void callback(String url, String json, AjaxStatus status) {
 				super.callback(url, json, status);
-				Log.w("XXX", ""+json);
+				Log.w("XXX", "" + json);
 				PostResponse response = new Gson().fromJson(json, PostResponse.class);
-				Log.w("XXX", ""+response);
+				Log.w("XXX", "" + response);
 				List<Post> posts = response.getResponse().getPosts();
-				if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 					adapter.addAll(posts);
-				}else{
+				} else {
 					for (Post post : posts) {
 						adapter.add(post);
 					}
